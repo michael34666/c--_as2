@@ -29,11 +29,12 @@ using namespace ariel;
               {
                 throw std::invalid_argument("Error in graph- cant have weight from vertx to himself");
               }
-                if(g[i][j] != g[j][i]){
-                    this->graph_symmetric=false;//graph directed
-                }
+                
                 if(g[i][j]!=0 && g[i][j]!=1){
                     this->graph_weighted=true;
+                }
+                if(g[i][j] != g[j][i]){
+                    this->graph_symmetric=false;//graph directed
                 }
                 if(this->graph_weighted==true && this->graph_symmetric==false){
                     return;
@@ -46,8 +47,8 @@ using namespace ariel;
 
 void const Graph::printGraph(){
     int edges=0;
-    for (size_t i = 0; i < g.size(); ++i) {
-        for (size_t j = 0; j < g[i].size(); ++j) {
+    for (size_t i = 0; i < g.size(); i++) {
+        for (size_t j = 0; j < g[i].size(); j++) {
             if(g[i][j] != 0){
                 edges++;
             }
@@ -77,8 +78,12 @@ void const Graph::printGraph(){
 Graph& Graph::operator+=(const Graph& other)
     {
    // Check if graphs have the same dimensions
-      if (g.size() != other.getGraph().size() || g[0].size() != other.getGraph()[0].size()) {
+      if (g.size() != other.getGraph().size() ) {
          throw std::invalid_argument("The graphs must have the same dimensions ");
+      }
+      if(g[0].size() != other.getGraph()[0].size())
+      {
+        throw std::invalid_argument("The graphs must have the same dimensions ");
       }
       if(other.getGraph().size()!= other.getGraph()[0].size())//another check if the matrix square
       {
@@ -98,8 +103,12 @@ Graph& Graph::operator+=(const Graph& other)
 Graph Graph::operator+(const Graph& other)
     {
    // Check if graphs have the same dimensions
-      if (g.size() != other.getGraph().size() || g[0].size() != other.getGraph()[0].size()) {
+      if (g.size() != other.getGraph().size() ) {
          throw std::invalid_argument("The graphs must have the same dimensions");
+      }
+      if(g[0].size() != other.getGraph()[0].size()){
+
+        throw std::invalid_argument("The graphs must have the same dimensions");
       }
 
     // Create a result graph
@@ -107,8 +116,8 @@ Graph Graph::operator+(const Graph& other)
    vector<vector<int>> result_graph(g.size(), vector<int>(g[0].size()));
 
    // addition g that is show of the class and other to result_graph
-   for (size_t i = 0; i < g.size(); ++i) {
-      for (size_t j = 0; j < g[0].size(); ++j) {
+   for (size_t i = 0; i < g.size(); i++) {
+      for (size_t j = 0; j < g[0].size(); j++) {
          result_graph[i][j] = g[i][j] + other.getGraph()[i][j];
       }
    }
@@ -137,6 +146,7 @@ Graph& Graph::operator++( ){
         }
          return *this;
     }
+
 //after-increment operator.
    Graph Graph::operator++(int)
    {
@@ -170,14 +180,12 @@ Graph Graph::operator*(const Graph& other)
     for (size_t j = 0; j < num_cols; j++) {
       for (size_t k = 0; k < num_rows; k++) { // Iterate through intermediate vertices
         g2[i][j]= g2[i][j] + g[i][k] * other.getGraph()[k][j];
+        g2[i][i]=0;//Reset the diagonal, because all graphs have no side from the vertex to itself
       }
     }
   }
-//Reset the diagonal, because all graphs have no side from the vertex to itself
-for (size_t i = 0; i < num_rows; ++i)
-{
-  g2[i][i]=0;
-}
+
+
  // Create a result graph 
   Graph result;
   result.loadGraph(g2);
@@ -217,16 +225,13 @@ Graph& Graph::operator*=(const Graph& other)
     for (size_t j = 0; j < num_cols; j++) {
       for (size_t k = 0; k < num_rows; k++) { // Iterate through intermediate vertices
         g2[i][j]= g2[i][j] + this->getGraph()[i][k] * other.getGraph()[k][j];
+        this->getGraph()[i][j]=g2[i][j];
+        this->getGraph()[i][i]=0;
       }
     }
   }
-//Reset the diagonal, because all graphs have no side from the vertex to itself
-for (size_t i = 0; i < num_rows; ++i)
-{ for (size_t j = 0; j < num_cols; j++) {
-  this->getGraph()[i][j]=g2[i][j];
-  this->getGraph()[i][i]=0;
-}
-}
+
+
 
   return *this;
 }
@@ -237,11 +242,9 @@ if(scalar==0)
 {
   throw std::invalid_argument("Cannot divided by 0");
 }
-for (size_t i = 0; i < g.size(); ++i) {
-      for (size_t j = 0; j < g[0].size(); ++j) {
-         g[i][j] = g[i][j]/scalar;
-      }
-   }
+
+    operator*=(1/scalar);
+   
    return *this;
 
 }
@@ -249,15 +252,19 @@ for (size_t i = 0; i < g.size(); ++i) {
 Graph Graph::operator-(const Graph& other)
  {
    // Check if graphs have the same dimensions
-      if (g.size() != other.getGraph().size() || g[0].size() != other.getGraph()[0].size()) {
+      if (g.size() != other.getGraph().size() ) {
          throw std::invalid_argument("The graphs must have the same dimensions");
+      }
+      if(g[0].size() != other.getGraph()[0].size()){
+
+       throw std::invalid_argument("The graphs must have the same dimensions");
       }
 
     // Create a result graph
    Graph result;
    vector<vector<int>> g2(this->getGraph().size(),vector<int>(this->getGraph()[0].size()));
 
-   //
+   
    for (size_t i = 0; i < g.size(); ++i) {
       for (size_t j = 0; j < g[0].size(); ++j) 
       {
@@ -271,14 +278,17 @@ Graph Graph::operator-(const Graph& other)
 Graph& Graph::operator-=(const Graph& other)
     {
    // Check if graphs have the same dimensions
-      if (g.size() != other.getGraph().size() || g[0].size() != other.getGraph()[0].size()) {
+      if (g.size() != other.getGraph().size() ) {
          throw std::invalid_argument("The graphs must have the same dimensions");
+      }
+      if(g[0].size() != other.getGraph()[0].size()){
+        throw std::invalid_argument("The graphs must have the same dimensions");
       }
 
  
    // Perform element-wise addition for corresponding elements in the graphs
-   for (size_t i = 0; i < this->getGraph().size(); ++i) {
-      for (size_t j = 0; j < this->getGraph()[0].size(); ++j) {
+   for (size_t i = 0; i < this->getGraph().size(); i++) {
+      for (size_t j = 0; j < this->getGraph()[0].size(); j++) {
          g[i][j] =g[i][j] - other.getGraph()[i][j];
       }
    }
@@ -290,7 +300,7 @@ Graph& Graph::operator-=(const Graph& other)
 
 Graph& Graph::operator-()
 {
-  return operator*=(-1);
+  return *this*=-1;
 }  
 
 ////after-decrement operator.
@@ -320,7 +330,7 @@ bool Graph::operator==(const Graph& other) const
     {
             return false;
     }
-      if(isSubmatrix(getGraph(),other.getGraph())&&isSubmatrix(other.getGraph(),getGraph()))
+      if(isSub(getGraph(),other.getGraph())&&isSub(other.getGraph(),getGraph()))
       {
         return true;
       }
@@ -337,7 +347,7 @@ bool Graph::operator!=(const Graph& other) const
   return true;
 }
 
-size_t Graph::countEdges() const
+size_t Graph::Edges_counter() const
  {
         size_t count = 0;
         bool sysmatric=true;
@@ -360,65 +370,21 @@ size_t Graph::countEdges() const
         return count;
     }
 
-bool Graph::isSubmatrix(const vector<vector<int>>& A, const vector<vector<int>>& B) const
-{
-    size_t n = A.size();
-    size_t m = B.size();
 
-    if (n > m) {
-        return false; // A cannot be contained in B if A is larger
-    }
-
-    // Iterate through each possible position in B to place the top-left corner of A
-    for (size_t i = 0; i <= m - n; ++i) {
-        for (size_t j = 0; j <= m - n; ++j) {
-            bool match = true;
-            // Check if A matches B at position (i, j)
-            for (size_t x = 0; x < n && match; ++x) {
-                for (size_t y = 0; y < n && match; ++y) {
-                    if (A[x][y] != B[i + x][j + y]&& A[x][y]!=0) {
-                        match = false;
-                    }
-                }
-            }
-            if (match) {
-                return true;
-            }
-        }
-    }
-
-    return false;
-}
-
-bool Graph::operator<(const Graph& other) const {
-if(isSubmatrix(getGraph(),other.getGraph()))
-{
+bool Graph::operator<=(const Graph& other) const{
+ if((*this<other)||( *this==other))
+ {
   return true;
-}
-if(isSubmatrix(other.getGraph(),getGraph()))
-{
+ }
   return false;
 }
 
-// Compare the number of edges
-size_t edgesCountG1 = this->countEdges();
-size_t edgesCountG2 = other.countEdges();
-if (edgesCountG2 > edgesCountG1) {
-                return true;
-            } 
-              else if (edgesCountG2 == edgesCountG1) 
-              {
-                 // Compare the order of magnitude of the representative matrix
-                  if (other.getGraph().size() > getGraph().size()) 
-                  {
-                     return true;
-                  }
-              }
-        return false;
-    }
-
-bool Graph::operator<=(const Graph& other) const{
- return( *this==other)||(*this<other);
+bool Graph::operator>=(const Graph& other) const{
+  if((*this>other)||( *this==other))
+  {
+    return true;
+  }
+  return false;
 }
 
 bool Graph::operator>(const Graph& other) const
@@ -430,8 +396,64 @@ if (!(*this<=other)) {
 return false;
 }
 
-bool Graph::operator>=(const Graph& other) const{
-  return( *this==other)||(*this>other);
+bool Graph::isSub(const vector<vector<int>>& A, const vector<vector<int>>& B) const
+{
+    size_t n = A.size();
+    size_t m = B.size();
+
+    if (n > m) {
+        return false; // A cannot be contained in B if A is larger
+    }
+
+    // Iterate through each possible position in B to place the top-left corner of A
+    for (size_t i = 0; i <= m - n; ++i) {
+    for (size_t j = 0; j <= m - n; ++j) {
+        bool match = true;
+        // Check if A matches B at position (i, j)
+        for (size_t u = 0; u < n && match; ++u) {
+            for (size_t v = 0; v < n && match; ++v) {
+                if (A[u][v] != 0 && A[u][v] != B[i + u][j + v]) {
+                    match = false;
+                }
+            }
+        }
+            if (match) {
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
+
+bool Graph::operator<(const Graph& other) const {
+if(isSub(other.getGraph(),getGraph()))
+{
+  return false;
+}
+
+if(isSub(getGraph(),other.getGraph()))
+{
+  return true;
+}
+
+
+// Compare the number of edges
+size_t CountG1 = this->Edges_counter();
+size_t CountG2 = other.Edges_counter();
+if (CountG2 > CountG1) {
+                return true;
+            } 
+              else if (CountG2 == CountG1) 
+              {
+                 // Compare the order of magnitude of the representative matrix
+                  if (other.getGraph().size() > getGraph().size()) 
+                  {
+                     return true;
+                  }
+              }
+        return false;
+    }
+
 
  

@@ -26,23 +26,28 @@ namespace ariel{
     vector<vector<int> > getGraph() const ;
     bool getSymmetricAdjMat() const;
     bool getWeight() const;
-    size_t countEdges() const ;
+    size_t Edges_counter() const ;
+
    Graph& operator*=(const double scalar);
-    Graph& operator*=(const Graph& other);
+   Graph& operator*=(const Graph& other);
+   Graph operator*(const Graph& other);
+   
+   Graph& operator/=(const double scalar);
+   
+   
    Graph& operator+=(const Graph& other);
    Graph operator+(const Graph& other);
    Graph& operator+();
-   Graph operator*(const Graph& other);
-   Graph& operator/=(const double scalar);
+   Graph& operator++();
+   Graph operator++(int);
+
    Graph operator-(const Graph& other);
    Graph& operator-();
    Graph& operator-=(const Graph& other);
-   Graph& operator++();
-   Graph operator++(int);
    Graph& operator--();
    Graph operator--(int);
 
-   bool isSubmatrix(const vector<vector<int>>& A, const vector<vector<int>>& B)const ;
+   bool isSub(const vector<vector<int>>& A, const vector<vector<int>>& B)const ;
    bool operator==(const Graph& other) const;
    bool operator!=(const Graph& other) const;
    bool operator<(const Graph& other) const;

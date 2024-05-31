@@ -18,7 +18,7 @@ TEST_CASE("Count edges") {
         {7, 1, 0}
     };
     g1.loadGraph(graph1);
-    CHECK(g1.countEdges() == 6);
+    CHECK(g1.Edges_counter() == 6);
 
      ariel::Graph g2;
     vector<vector<int>> graph2 = {
@@ -27,7 +27,7 @@ TEST_CASE("Count edges") {
         {1, 3, 0}
     };
     g2.loadGraph(graph2);
-    CHECK(g2.countEdges() == 3);
+    CHECK(g2.Edges_counter() == 3);
     
       ariel::Graph g3;
     vector<vector<int>> graph3 = {
@@ -36,7 +36,7 @@ TEST_CASE("Count edges") {
         {0, 0, 0}
     };
     g3.loadGraph(graph3);
-    CHECK(g3.countEdges() == 0);
+    CHECK(g3.Edges_counter() == 0);
     
 
 }
@@ -277,8 +277,8 @@ TEST_CASE("Submatrix check") {
         {0, 1},
         {1, 0}
     };
-    CHECK(g1.isSubmatrix(submatrix,graph1) == true);
-    CHECK(g1.isSubmatrix(graph1, submatrix) == false);
+    CHECK(g1.isSub(submatrix,graph1) == true);
+    CHECK(g1.isSub(graph1, submatrix) == false);
 
 
     ariel::Graph g2;
@@ -293,7 +293,7 @@ TEST_CASE("Submatrix check") {
         {0, 2},
         {0, 0}
     };
-    CHECK(g2.isSubmatrix(submatrix2,graph2) == true);
+    CHECK(g2.isSub(submatrix2,graph2) == true);
 
 
 }
